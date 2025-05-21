@@ -1,7 +1,7 @@
 const Participant = require("../../classes/Participant");
 const Room = require("../../classes/Room");
 const getWorker = require("../../media-helpers/getWorker");
-const updateActiveSpeakers = require("../../media-helpers/updateActiveSpeakers");
+const updateSpeakers = require("../../media-helpers/updateSpeakers");
 
 const handleJoinRoom = async (socket, rooms, workers, RoomData, ackCall) => {
   const participant = new Participant(RoomData.name, socket.id);
@@ -20,14 +20,14 @@ const handleJoinRoom = async (socket, rooms, workers, RoomData, ackCall) => {
 
   const activeAudioProducers = [...participant.room.activeSpeakerList];
   const activeVideoProducers = activeAudioProducers.map((aid) => {
-    const producingParticipant = participant.room.clients.find(
+    const producingParticipant = participant.room.members.find(
       (c) => c?.producer?.audio?.id === aid
     );
     return producingParticipant?.producer?.video?.id;
   });
 
   const associatedUserNames = activeAudioProducers.map((aid) => {
-    const producingParticipant = participant.room.clients.find(
+    const producingParticipant = participant.room.members.find(
       (c) => c?.producer?.audio?.id === aid
     );
     return producingParticipant?.userName;
@@ -40,8 +40,8 @@ const handleJoinRoom = async (socket, rooms, workers, RoomData, ackCall) => {
     associatedUserNames,
   });
 
-  if (participant.room.clients.length > 1) {
-    updateActiveSpeakers(participant.room, socket.io);
+  if (participant.room.members.length > 1) {
+    updateSpeakers(participant.room, socket.io);
   }
 
   return participant;

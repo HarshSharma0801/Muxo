@@ -4,7 +4,7 @@ const handleRequestTransport = async (participant, { type, audioPid }) => {
   if (type === "producer") {
     clientTransportParams = await participant.addTransport(type);
   } else if (type === "consumer") {
-    const producingParticipant = participant.room.clients.find(
+    const producingParticipant = participant.room.members.find(
       (c) => c?.producer?.audio?.id === audioPid
     );
     const videoPid = producingParticipant?.producer?.video?.id;

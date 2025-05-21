@@ -1,22 +1,22 @@
 const config = require("../config/config");
-const newDominantSpeaker = require("../media-helpers/newDominantSpeaker");
+const dominantSpeaker = require("../media-helpers/dominantSpeaker");
 
 class Room {
   constructor(roomName, worker) {
     this.roomName = roomName;
     this.worker = worker;
     this.router = null;
-    this.clients = [];
+    this.members = [];
     this.activeSpeakerList = [];
     this.activeSpeakerObserver = null;
   }
 
   addParticipant(participant) {
-    this.clients.push(participant);
+    this.members.push(participant);
   }
 
   removeParticipant(participant) {
-    this.clients = this.clients.filter(
+    this.members = this.members.filter(
       (p) => p.socketId !== participant.socketId
     );
 
@@ -37,12 +37,12 @@ class Room {
     });
 
     this.activeSpeakerObserver.on("dominantspeaker", (dominantSpeaker) =>
-      newDominantSpeaker(dominantSpeaker, this, io)
+      dominantSpeaker(dominantSpeaker, this, io)
     );
   }
 
   async close() {
-    for (const participant of this.clients) {
+    for (const participant of this.members) {
       participant.closeAllTransports();
     }
 
@@ -56,13 +56,13 @@ class Room {
   }
 
   getParticipantBySocketId(socketId) {
-    return this.clients.find(
+    return this.members.find(
       (participant) => participant.socketId === socketId
     );
   }
 
   getParticipantByProducerId(producerId) {
-    return this.clients.find(
+    return this.members.find(
       (participant) =>
         participant.producer?.audio?.id === producerId ||
         participant.producer?.video?.id === producerId

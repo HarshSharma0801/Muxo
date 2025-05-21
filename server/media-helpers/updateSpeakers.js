@@ -1,12 +1,10 @@
-const updateActiveSpeakers = (room, io) => {
+const updateSpeakers = (room, io) => {
   const activeSpeakers = room.activeSpeakerList.slice(0, 10);
   const mutedSpeakers = room.activeSpeakerList.slice(10);
   const newTransportsByPeer = {};
 
-  room.clients.forEach((participant) => {
-    // Handle muted speakers
+  room.members.forEach((participant) => {
     mutedSpeakers.forEach((producerId) => {
-     
       if (participant?.producer?.audio?.id === producerId) {
         participant?.producer?.audio?.pause();
         participant?.producer?.video?.pause();
@@ -26,7 +24,6 @@ const updateActiveSpeakers = (room, io) => {
 
     const newSpeakersToParticipant = [];
     activeSpeakers.forEach((producerId) => {
-      
       if (participant?.producer?.audio?.id === producerId) {
         participant?.producer?.audio?.resume();
         participant?.producer?.video?.resume();
@@ -57,9 +54,9 @@ const updateActiveSpeakers = (room, io) => {
   });
 
   // Broadcast active speakers update to the room
-  io.to(room.roomName).emit("updateActiveSpeakers", activeSpeakers);
+  io.to(room.roomName).emit("updateSpeakers", activeSpeakers);
 
   return newTransportsByPeer;
 };
 
-module.exports = updateActiveSpeakers;
+module.exports = updateSpeakers;

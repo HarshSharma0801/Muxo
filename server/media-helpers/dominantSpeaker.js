@@ -1,7 +1,6 @@
-const updateActiveSpeakers = require("./updateActiveSpeakers");
+const updateSpeakers = require("./updateSpeakers");
 
-function newDominantSpeaker(dominantSpeaker, room, io) {
-
+function dominantSpeaker(dominantSpeaker, room, io) {
   const producerIndex = room.activeSpeakerList.findIndex(
     (producerId) => producerId === dominantSpeaker.producer.id
   );
@@ -12,18 +11,18 @@ function newDominantSpeaker(dominantSpeaker, room, io) {
     room.activeSpeakerList.unshift(dominantSpeaker.producer.id);
   }
 
-  const newTransportsByPeer = updateActiveSpeakers(room, io);
+  const newTransportsByPeer = updateSpeakers(room, io);
   for (const [socketId, activeAudioProducers] of Object.entries(
     newTransportsByPeer
   )) {
     const activeVideoProducers = activeAudioProducers.map((audioPid) => {
-      const producerParticipant = room.clients.find(
+      const producerParticipant = room.members.find(
         (c) => c?.producer?.audio?.id === audioPid
       );
       return producerParticipant?.producer?.video?.id;
     });
     const associatedUserNames = activeAudioProducers.map((audioPid) => {
-      const producerParticipant = room.clients.find(
+      const producerParticipant = room.members.find(
         (c) => c?.producer?.audio?.id === audioPid
       );
       return producerParticipant?.userName;
@@ -38,4 +37,4 @@ function newDominantSpeaker(dominantSpeaker, room, io) {
   }
 }
 
-module.exports = newDominantSpeaker;
+module.exports = dominantSpeaker;

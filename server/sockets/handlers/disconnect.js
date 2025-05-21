@@ -1,4 +1,4 @@
-const updateActiveSpeakers = require("../../media-helpers/updateActiveSpeakers");
+const updateSpeakers = require("../../media-helpers/updateSpeakers");
 
 const handleDisconnect = async (participant, socket, rooms) => {
   if (!participant || !participant.room) return;
@@ -24,10 +24,10 @@ const handleDisconnect = async (participant, socket, rooms) => {
       });
     }
 
-    const otherClients = room.clients.filter((c) => c.socketId !== socket.id);
+    const othermembers = room.members.filter((c) => c.socketId !== socket.id);
 
     if (participant.producer?.audio?.id || participant.producer?.video?.id) {
-      otherClients.forEach((otherClient) => {
+      othermembers.forEach((otherClient) => {
         socket.io.to(otherClient.socketId).emit("producerClosed", {
           audioPid: participant.producer?.audio?.id,
           videoPid: participant.producer?.video?.id,
@@ -35,11 +35,11 @@ const handleDisconnect = async (participant, socket, rooms) => {
       });
     }
 
-    if (room.clients.length === 0) {
+    if (room.members.length === 0) {
       rooms = rooms.filter((r) => r.roomName !== room.roomName);
       await room.router.close();
     } else {
-      updateActiveSpeakers(room, socket.io);
+      updateSpeakers(room, socket.io);
     }
   } catch (error) {
     console.error("Error during cleanup:", error);
@@ -72,10 +72,10 @@ const handleHangUp = async (participant, socket, rooms) => {
       });
     }
 
-    const otherClients = room.clients.filter((c) => c.socketId !== socket.id);
+    const othermembers = room.members.filter((c) => c.socketId !== socket.id);
 
     if (participant.producer?.audio?.id || participant.producer?.video?.id) {
-      otherClients.forEach((otherClient) => {
+      othermembers.forEach((otherClient) => {
         socket.io.to(otherClient.socketId).emit("producerClosed", {
           audioPid: participant.producer?.audio?.id,
           videoPid: participant.producer?.video?.id,
@@ -83,11 +83,11 @@ const handleHangUp = async (participant, socket, rooms) => {
       });
     }
 
-    if (room.clients.length === 0) {
+    if (room.members.length === 0) {
       rooms = rooms.filter((r) => r.roomName !== room.roomName);
       await room.router.close();
     } else {
-      updateActiveSpeakers(room, socket.io);
+      updateSpeakers(room, socket.io);
     }
 
     return "success";

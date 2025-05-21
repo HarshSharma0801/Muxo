@@ -1,4 +1,4 @@
-const updateActiveSpeakers = require("../../media-helpers/updateActiveSpeakers");
+const updateSpeakers = require("../../media-helpers/updateSpeakers");
 
 const handleStartProducing = async (
   participant,
@@ -16,23 +16,20 @@ const handleStartProducing = async (
       participant.room.activeSpeakerList.push(newProducer.id);
     }
 
-    const newTransportsByPeer = updateActiveSpeakers(
-      participant.room,
-      socket.io
-    );
+    const newTransportsByPeer = updateSpeakers(participant.room, socket.io);
 
     for (const [socketId, activeAudioProducers] of Object.entries(
       newTransportsByPeer
     )) {
       const activeVideoProducers = activeAudioProducers.map((aPid) => {
-        const producerParticipant = participant.room.clients.find(
+        const producerParticipant = participant.room.members.find(
           (c) => c?.producer?.audio?.id === aPid
         );
         return producerParticipant?.producer?.video?.id;
       });
 
       const associatedUserNames = activeAudioProducers.map((aPid) => {
-        const producerParticipant = participant.room.clients.find(
+        const producerParticipant = participant.room.members.find(
           (c) => c?.producer?.audio?.id === aPid
         );
         return producerParticipant?.userName;
