@@ -17,7 +17,7 @@ let workers = null;
 let rooms = [];
 
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Server is running fine !!!!");
 });
 
 const initMediaSoup = async () => {
