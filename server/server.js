@@ -16,6 +16,10 @@ const io = socketio(httpServer, {
 let workers = null;
 let rooms = [];
 
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
 const initMediaSoup = async () => {
   try {
     workers = await createWorkers();
