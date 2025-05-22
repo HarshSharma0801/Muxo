@@ -150,10 +150,3 @@ node server.js
 - Room cleanup on participant exit
 - Connection state management
 
-## Future Improvements
-
-- Recording capabilities
-- Screen sharing
-- Chat functionality
-- Bandwidth adaptation
-- Network quality monitoring
