@@ -215,7 +215,7 @@ const Stream = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-4 md:p-8">
         {/* Header with participant count */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl font-bold text-white">Video Conference</h1>
+          <h1 className="text-xl font-bold text-white">Muxo</h1>
           {AllUsers.length > 0 && (
             <div className="bg-blue-800 text-white px-3 py-1 rounded-full text-sm">
               {AllUsers.length + (yourFeed ? 1 : 0)} participants
