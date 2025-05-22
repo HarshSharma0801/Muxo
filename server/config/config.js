@@ -1,3 +1,4 @@
+
 const config = {
   workerSettings: {
       rtcMinPort: 40000,
@@ -14,38 +15,40 @@ const config = {
   },
   routerMediaCodecs: [
       {
-        kind: "audio",
-        mimeType: "audio/opus",
-        clockRate: 48000,
-        channels: 2
+        kind        : "audio",
+        mimeType    : "audio/opus",
+        clockRate   : 48000,
+        channels    : 2
       },
       {
-        kind: "video",
-        mimeType: "video/VP8", // Prioritize VP8 for t2.micro
-        clockRate: 90000,
-        parameters: {}
-      },
-      {
-        kind: "video",
-        mimeType: "video/H264",
-        clockRate: 90000,
-        parameters: {
-          "packetization-mode": 1,
-          "profile-level-id": "42e01f",
-          "level-asymmetry-allowed": 1
+        kind       : "video",
+        mimeType   : "video/H264",
+        clockRate  : 90000,
+        parameters :
+        {
+          "packetization-mode"      : 1,
+          "profile-level-id"        : "42e01f",
+          "level-asymmetry-allowed" : 1
         }
-      }
+      },
+      {
+          kind       : "video",
+          mimeType   : "video/VP8",
+          clockRate  : 90000,
+          parameters : {}
+        }        
   ],
   webRtcTransport: {
     listenIps: [
       {
-        ip: '0.0.0.0', // Listen on all interfaces
-        announcedIp: '13.127.148.79' // EC2 public IP
+        ip: '127.0.0.1', 
+        announcedIp: null
       }
     ],
-    maxIncomingBitrate: 1500000, // Reduce to 1.5 Mbps for t2.micro
-    initialAvailableOutgoingBitrate: 1500000 // Reduce to 1.5 Mbps
+   
+    maxIncomingBitrate: 5000000, 
+    initialAvailableOutgoingBitrate: 5000000 
   },
-};
+}
 
-module.exports = config;
+module.exports = config
