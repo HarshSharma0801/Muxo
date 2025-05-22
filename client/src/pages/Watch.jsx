@@ -35,7 +35,7 @@ const Watch = () => {
 
         try {
           const consumerTransportParams = await socket.emitWithAck(
-            "requestTransport",
+            "request-transport",
             { type: "consumer", audioPid }
           );
 
@@ -100,7 +100,6 @@ const Watch = () => {
 
   useEffect(() => {
     socket.on("newProducersToConsume", (consumeData) => {
-    
       const consumed = setupConsumerTransports(consumeData);
       if (consumed) {
         console.log("consumed");
@@ -200,7 +199,7 @@ const Watch = () => {
             </div>
           </div>
         </div>
-      
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {AllUsers && AllUsers.length > 0 ? (
             AllUsers.map((data, index) => (

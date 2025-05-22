@@ -7,9 +7,9 @@ const initializeMediaConsumer = (
   slot
 ) => {
   return new Promise(async (resolve, reject) => {
-    // consume from the basics, emit the consumeMedia event, we take
+    // consume from the basics, emit the consume event, we take
     // the params we get back, and run .consume(). That gives us our track
-    const consumerParams = await socket.emitWithAck("consumeMedia", {
+    const consumerParams = await socket.emitWithAck("consume", {
       rtpCapabilities: device.rtpCapabilities,
       pid,
       kind,
@@ -25,7 +25,7 @@ const initializeMediaConsumer = (
       const { track } = consumer;
       // add track events
       //unpause
-      await socket.emitWithAck("unpauseConsumer", { pid, kind });
+      await socket.emitWithAck("unpause", { pid, kind });
       resolve(consumer);
     }
   });

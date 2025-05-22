@@ -16,7 +16,7 @@ const setupSocketHandlers = (io, rooms, workers) => {
 
     socket.io = io;
 
-    socket.on("join-room", async (RoomData, ackCall) => {
+    socket.on("join", async (RoomData, ackCall) => {
       participant = await handleJoinRoom(
         socket,
         rooms,
@@ -26,27 +26,27 @@ const setupSocketHandlers = (io, rooms, workers) => {
       );
     });
 
-    socket.on("requestTransport", async (data, ackCall) => {
+    socket.on("request-transport", async (data, ackCall) => {
       const result = await handleRequestTransport(participant, data);
       ackCall(result);
     });
 
-    socket.on("connectTransport", async (data, ackCall) => {
+    socket.on("connect-transport", async (data, ackCall) => {
       const result = await handleConnectTransport(participant, data);
       ackCall(result);
     });
 
-    socket.on("startProducing", async (data, ackCall) => {
+    socket.on("produce", async (data, ackCall) => {
       const result = await handleStartProducing(participant, data, socket);
       ackCall(result);
     });
 
-    socket.on("consumeMedia", async (data, ackCall) => {
+    socket.on("consume", async (data, ackCall) => {
       const result = await handleConsumeMedia(participant, data);
       ackCall(result);
     });
 
-    socket.on("unpauseConsumer", async (data, ackCall) => {
+    socket.on("unpause", async (data, ackCall) => {
       await handleUnpauseConsumer(participant, data);
       ackCall();
     });

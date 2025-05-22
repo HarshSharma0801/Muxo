@@ -40,7 +40,7 @@ const Stream = () => {
 
         try {
           const consumerTransportParams = await socket.emitWithAck(
-            "requestTransport",
+            "request-transport",
             { type: "consumer", audioPid }
           );
 
@@ -197,7 +197,6 @@ const Stream = () => {
       setYourFeed(false);
       setIsVisible(true);
 
-     
       await socket.emitWithAck("hangUp");
 
       setAllUsers([]);

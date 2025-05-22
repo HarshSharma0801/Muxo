@@ -9,7 +9,7 @@ const initializeConsumerTransport = (
   consumerTransport.on(
     "connect",
     async ({ dtlsParameters }, callback, errback) => {
-      const connectResp = await socket.emitWithAck("connectTransport", {
+      const connectResp = await socket.emitWithAck("connect-transport", {
         dtlsParameters,
         type: "consumer",
         audioPid,

@@ -25,7 +25,7 @@ const Join = () => {
     consumeData.activeAudioProducers.forEach(async (audioPid, i) => {
       const videoPid = consumeData.activeVideoProducers[i];
       const consumerTransportParams = await socket.emitWithAck(
-        "requestTransport",
+        "request-transport",
         { type: "consumer", audioPid }
       );
       if (!deviceRef.current) {
@@ -103,10 +103,9 @@ const Join = () => {
       return;
     }
 
-
     try {
       const joinRoomRes = await new Promise((resolve, reject) => {
-        socket.emit("join-room", roomData, (response) => {
+        socket.emit("join", roomData, (response) => {
           if (response && response.routerRtpCapabilities) {
             resolve(response);
           } else {

@@ -72,20 +72,20 @@ graph TD
 
 1. **Room Management**
 
-   - `join-room`: Join/create a room
+   - `join`: Join/create a room
    - `disconnect`: Handle participant disconnection
    - `hangUp`: Graceful room exit
 
 2. **Transport Management**
 
-   - `requestTransport`: Request new transport
-   - `connectTransport`: Connect transport with DTLS parameters
+   - `request-transport`: Request new transport
+   - `connect-transport`: Connect transport with DTLS parameters
 
 3. **Media Handling**
 
-   - `startProducing`: Start media production
-   - `consumeMedia`: Consume media from other participants
-   - `unpauseConsumer`: Resume media consumption
+   - `produce`: Start media production
+   - `consume`: Consume media from other participants
+   - `unpause`: Resume media consumption
 
 4. **Speaker Management**
    - `updateSpeakers`: Update active speaker list

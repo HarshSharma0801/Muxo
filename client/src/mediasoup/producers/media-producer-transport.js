@@ -2,7 +2,7 @@ const initializeProducerTransport = (socket, device) =>
   new Promise(async (resolve, reject) => {
     // ask the server to make a transport and send params
     const producerTransportParams = await socket.emitWithAck(
-      "requestTransport",
+      "request-transport",
       { type: "producer" }
     );
 
@@ -17,7 +17,7 @@ const initializeProducerTransport = (socket, device) =>
       async ({ dtlsParameters }, callback, errBack) => {
         // emit connect transport
 
-        const connectResp = await socket.emitWithAck("connectTransport", {
+        const connectResp = await socket.emitWithAck("connect-transport", {
           dtlsParameters,
           type: "producer",
         });
@@ -36,7 +36,7 @@ const initializeProducerTransport = (socket, device) =>
       // emit produce transport
 
       const { kind, rtpParameters } = parameters;
-      const produceResp = await socket.emitWithAck("startProducing", {
+      const produceResp = await socket.emitWithAck("produce", {
         kind,
         rtpParameters,
       });
