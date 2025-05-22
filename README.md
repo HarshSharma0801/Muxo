@@ -13,12 +13,12 @@ graph TD
     C -->|Router| D[Media Router]
     D -->|Producer| E[Media Producer]
     D -->|Consumer| F[Media Consumer]
-    G[Room Manager] -->|Manages| H[Server]
+    G[Server] 
     H -->|Contains| I[Workers]
     I -->|Has| J[Routers]
-    J -->|Upstream| K[Transports]
-    J -->|Upstream| L[Producer Transport]
-    J -->|Downstream| L[Consumer Transport]
+    J -->|Has| K[Transports]
+    K -->|Upstream| L[Producer Transport]
+    K -->|Downstream| L[Consumer Transport]
 ```
 
 ### Core Components
