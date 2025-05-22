@@ -22,7 +22,6 @@ const Watch = () => {
       return false;
     }
 
-    // Filter out any undefined/null PIDs
     const validIndices = consumeData.activeAudioProducers
       .map((pid, i) => (pid ? i : null))
       .filter((i) => i !== null);
@@ -153,10 +152,8 @@ const Watch = () => {
 
       setYourFeed(false);
 
-      // Notify server to clean up
       await socket.emitWithAck("hangUp");
 
-      // Clean up local state
       setAllUsers([]);
       setConsumers({});
       router("/");
@@ -203,9 +200,7 @@ const Watch = () => {
             </div>
           </div>
         </div>
-        {/* Local video (self view) */}
-
-        {/* Remote videos grid */}
+      
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {AllUsers && AllUsers.length > 0 ? (
             AllUsers.map((data, index) => (
