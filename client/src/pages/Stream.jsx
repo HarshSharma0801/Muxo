@@ -27,7 +27,6 @@ const Stream = () => {
       return false;
     }
 
-    // Filter out any undefined/null PIDs
     const validIndices = consumeData.activeAudioProducers
       .map((pid, i) => (pid ? i : null))
       .filter((i) => i !== null);
@@ -198,10 +197,9 @@ const Stream = () => {
       setYourFeed(false);
       setIsVisible(true);
 
-      // Notify server to clean up
+     
       await socket.emitWithAck("hangUp");
 
-      // Clean up local state
       setAllUsers([]);
       setConsumers({});
       router("/");
@@ -213,7 +211,6 @@ const Stream = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-4 md:p-8">
-        {/* Header with participant count */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold text-white">Muxo</h1>
           {AllUsers.length > 0 && (
@@ -222,7 +219,6 @@ const Stream = () => {
             </div>
           )}
         </div>
-        {/* Local video (self view) */}
 
         {yourFeed && (
           <div className="absolute bottom-4 right-4 z-10">
