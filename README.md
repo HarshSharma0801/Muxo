@@ -2,6 +2,11 @@
 
 A real-time video conferencing application built with Mediasoup, Socket.IO, and WebRTC. This application supports multiple participants in a room with audio/video streaming, active speaker detection, and dynamic media routing.
 
+## Video
+
+https://github.com/user-attachments/assets/ee111853-9aa1-4ffb-8a45-8fa977b613a8
+
+
 ## Architecture Overview
 
 ### System Components
