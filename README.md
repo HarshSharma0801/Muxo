@@ -13,10 +13,11 @@ graph TD
     C -->|Router| D[Media Router]
     D -->|Producer| E[Media Producer]
     D -->|Consumer| F[Media Consumer]
-    G[Room Manager] -->|Manages| H[Rooms]
-    H -->|Contains| I[Participants]
-    I -->|Has| J[Transports]
-    J -->|Upstream| K[Producer Transport]
+    G[Room Manager] -->|Manages| H[Server]
+    H -->|Contains| I[Workers]
+    I -->|Has| J[Routers]
+    J -->|Upstream| K[Transports]
+    J -->|Upstream| L[Producer Transport]
     J -->|Downstream| L[Consumer Transport]
 ```
 
