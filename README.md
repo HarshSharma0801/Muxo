@@ -9,7 +9,7 @@ A real-time video conferencing application built with Mediasoup, Socket.IO, and 
 ```mermaid
 graph TD
     %% Client Side
-    A[Client] -->|has| B[Socket.IO Connection]
+    A[Client] -->|has| B[Socket.IO]
     B -->|has| C[Device]
     C -->|contains| D[Transports]
     D -->|upstream| E[Producer Transport]
