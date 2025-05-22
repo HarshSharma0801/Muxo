@@ -8,17 +8,25 @@ A real-time video conferencing application built with Mediasoup, Socket.IO, and 
 
 ```mermaid
 graph TD
-    A[Client] -->|WebSocket| B[Socket.IO Server]
-    B -->|Media| C[Mediasoup Worker]
-    C -->|Router| D[Media Router]
-    D -->|Producer| E[Media Producer]
-    D -->|Consumer| F[Media Consumer]
-    G[Server] 
-    H -->|Contains| I[Workers]
-    I -->|Has| J[Routers]
-    J -->|Has| K[Transports]
-    K -->|Upstream| L[Producer Transport]
-    K -->|Downstream| L[Consumer Transport]
+    %% Client Side
+    A[Client] -->|has| B[Socket.IO Connection]
+    B -->|has| C[Device]
+    C -->|contains| D[Transports]
+    D -->|upstream| E[Producer Transport]
+    D -->|downstream| F[Consumer Transport]
+
+    %% Server Side
+    G[Server] -->|has| H[Workers]
+    H -->|has| I[Routers]
+    I -->|contains| J[Transports]
+    J -->|upstream| K[Producer Transport]
+    J -->|downstream| L[Consumer Transport]
+
+    %% Media Flow
+    E -->|media| M[Media Router]
+    F -->|media| M
+    K -->|media| M
+    L -->|media| M
 ```
 
 ### Core Components
@@ -150,4 +158,3 @@ node server.js
 - Transport error recovery
 - Room cleanup on participant exit
 - Connection state management
-
