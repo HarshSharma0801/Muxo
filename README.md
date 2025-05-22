@@ -1,4 +1,4 @@
-# Video Conferencing Application with Mediasoup
+# Muxo -> Video Conferencing Application with Mediasoup
 
 A real-time video conferencing application built with Mediasoup, Socket.IO, and WebRTC. This application supports multiple participants in a room with audio/video streaming, active speaker detection, and dynamic media routing.
 
