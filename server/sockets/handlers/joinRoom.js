@@ -3,7 +3,14 @@ const Room = require("../../classes/Room");
 const getWorker = require("../../media-helpers/getWorker");
 const updateSpeakers = require("../../media-helpers/updateSpeakers");
 
-const handleJoinRoom = async (socket, rooms, workers, RoomData, ackCall) => {
+const handleJoinRoom = async (
+  socket,
+  rooms,
+  workers,
+  RoomData,
+  ackCall,
+  hlsManager
+) => {
   const participant = new Participant(RoomData.name, socket.id);
 
   let requestedRoom = rooms.find((room) => room.roomName === RoomData.room);

@@ -10,7 +10,7 @@ const {
 } = require("./handlers/consumer");
 const { handleDisconnect, handleHangUp } = require("./handlers/disconnect");
 
-const setupSocketHandlers = (io, rooms, workers) => {
+const setupSocketHandlers = (io, rooms, workers, hlsManager) => {
   io.on("connect", (socket) => {
     let participant;
 
@@ -22,7 +22,8 @@ const setupSocketHandlers = (io, rooms, workers) => {
         rooms,
         workers,
         RoomData,
-        ackCall
+        ackCall,
+        hlsManager
       );
     });
 
@@ -37,7 +38,12 @@ const setupSocketHandlers = (io, rooms, workers) => {
     });
 
     socket.on("produce", async (data, ackCall) => {
-      const result = await handleStartProducing(participant, data, socket);
+      const result = await handleStartProducing(
+        participant,
+        data,
+        socket,
+        hlsManager
+      );
       ackCall(result);
     });
 
@@ -52,11 +58,11 @@ const setupSocketHandlers = (io, rooms, workers) => {
     });
 
     socket.on("disconnect", async () => {
-      await handleDisconnect(participant, socket, rooms);
+      await handleDisconnect(participant, socket, rooms, hlsManager);
     });
 
     socket.on("hangUp", async (ackCall) => {
-      const result = await handleHangUp(participant, socket, rooms);
+      const result = await handleHangUp(participant, socket, rooms, hlsManager);
       ackCall(result);
     });
   });

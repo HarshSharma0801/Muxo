@@ -1,103 +1,124 @@
 const updateSpeakers = require("../../media-helpers/updateSpeakers");
 
-const handleDisconnect = async (participant, socket, rooms) => {
-  if (!participant || !participant.room) return;
+const handleDisconnect = async (participant, socket, rooms, hlsManager) => {
+  if (!participant || !participant.room) {
+    console.log("Participant or room not found during disconnect");
+    return;
+  }
 
-  try {
-    const room = participant.room;
+  const room = participant.room;
+  const roomName = room.roomName;
 
-    room.removeParticipant(participant);
+  // Close all transports for the participant
+  participant.closeAllTransports();
 
-    if (participant.producer?.audio?.id) {
-      room.activeSpeakerList = room.activeSpeakerList.filter(
-        (pid) => pid !== participant.producer.audio.id
-      );
+  // Remove participant from room
+  participant.removeFromRoom();
+
+  // Notify other participants about producer closure
+  if (participant.producer?.audio?.id || participant.producer?.video?.id) {
+    socket.to(roomName).emit("producerClosed", {
+      audioPid: participant.producer?.audio?.id,
+      videoPid: participant.producer?.video?.id,
+    });
+  }
+
+  console.log(
+    `Participant ${participant.userName} disconnected from room ${roomName}`
+  );
+
+  // Check if room is empty or has no more producers
+  const hasProducers = room.members.some(
+    (member) => member.producer.video || member.producer.audio
+  );
+
+  if (room.members.length === 0) {
+    // Room is empty, remove it and stop HLS stream
+    const roomIndex = rooms.findIndex((r) => r.roomName === roomName);
+    if (roomIndex !== -1) {
+      await room.close();
+      rooms.splice(roomIndex, 1);
+      console.log(`Room ${roomName} closed and removed`);
     }
 
-    if (participant.upstreamTransport) {
-      participant.upstreamTransport.close();
+    if (hlsManager) {
+      await hlsManager.stopHLSStream(roomName);
     }
+  } else if (!hasProducers && hlsManager) {
+    // No more producers, stop HLS stream but keep room
+    await hlsManager.stopHLSStream(roomName);
+  } else if (hlsManager) {
+    // Update HLS stream with remaining producers
+    await hlsManager.updateStream(roomName, room);
+  }
 
-    if (participant.downstreamTransports) {
-      participant.downstreamTransports.forEach((transport) => {
-        transport.transport.close();
-      });
-    }
-
-    const othermembers = room.members.filter((c) => c.socketId !== socket.id);
-
-    if (participant.producer?.audio?.id || participant.producer?.video?.id) {
-      othermembers.forEach((otherClient) => {
-        socket.io.to(otherClient.socketId).emit("producerClosed", {
-          audioPid: participant.producer?.audio?.id,
-          videoPid: participant.producer?.video?.id,
-        });
-      });
-    }
-
-    if (room.members.length === 0) {
-      rooms = rooms.filter((r) => r.roomName !== room.roomName);
-      await room.router.close();
-    } else {
-      updateSpeakers(room, socket.io);
-    }
-  } catch (error) {
-    console.error("Error during cleanup:", error);
+  // Update speakers for remaining participants
+  if (room.members.length > 0) {
+    updateSpeakers(room, socket.io);
   }
 };
 
-const handleHangUp = async (participant, socket, rooms) => {
-  try {
-    if (!participant || !participant.room) {
-      return "success";
-    }
-
-    const room = participant.room;
-
-    room.removeParticipant(participant);
-
-    if (participant.producer?.audio?.id) {
-      room.activeSpeakerList = room.activeSpeakerList.filter(
-        (pid) => pid !== participant.producer.audio.id
-      );
-    }
-
-    if (participant.upstreamTransport) {
-      participant.upstreamTransport.close();
-    }
-
-    if (participant.downstreamTransports) {
-      participant.downstreamTransports.forEach((transport) => {
-        transport.transport.close();
-      });
-    }
-
-    const othermembers = room.members.filter((c) => c.socketId !== socket.id);
-
-    if (participant.producer?.audio?.id || participant.producer?.video?.id) {
-      othermembers.forEach((otherClient) => {
-        socket.io.to(otherClient.socketId).emit("producerClosed", {
-          audioPid: participant.producer?.audio?.id,
-          videoPid: participant.producer?.video?.id,
-        });
-      });
-    }
-
-    if (room.members.length === 0) {
-      rooms = rooms.filter((r) => r.roomName !== room.roomName);
-      await room.router.close();
-    } else {
-      updateSpeakers(room, socket.io);
-    }
-
-    return "success";
-  } catch (error) {
-    console.error("Error during hangup:", error);
-    return "error";
+const handleHangUp = async (participant, socket, rooms, hlsManager) => {
+  if (!participant || !participant.room) {
+    console.log("Participant or room not found during hangup");
+    return { success: false };
   }
+
+  const room = participant.room;
+  const roomName = room.roomName;
+
+  // Close all transports for the participant
+  participant.closeAllTransports();
+
+  // Remove participant from room
+  participant.removeFromRoom();
+
+  // Leave the socket room
+  socket.leave(roomName);
+
+  // Notify other participants about producer closure
+  if (participant.producer?.audio?.id || participant.producer?.video?.id) {
+    socket.to(roomName).emit("producerClosed", {
+      audioPid: participant.producer?.audio?.id,
+      videoPid: participant.producer?.video?.id,
+    });
+  }
+
+  console.log(
+    `Participant ${participant.userName} hung up from room ${roomName}`
+  );
+
+  // Check if room is empty or has no more producers
+  const hasProducers = room.members.some(
+    (member) => member.producer.video || member.producer.audio
+  );
+
+  if (room.members.length === 0) {
+    // Room is empty, remove it and stop HLS stream
+    const roomIndex = rooms.findIndex((r) => r.roomName === roomName);
+    if (roomIndex !== -1) {
+      await room.close();
+      rooms.splice(roomIndex, 1);
+      console.log(`Room ${roomName} closed and removed`);
+    }
+
+    if (hlsManager) {
+      await hlsManager.stopHLSStream(roomName);
+    }
+  } else if (!hasProducers && hlsManager) {
+    // No more producers, stop HLS stream but keep room
+    await hlsManager.stopHLSStream(roomName);
+  } else if (hlsManager) {
+    // Update HLS stream with remaining producers
+    await hlsManager.updateStream(roomName, room);
+  }
+
+  // Update speakers for remaining participants
+  if (room.members.length > 0) {
+    updateSpeakers(room, socket.io);
+  }
+
+  return { success: true };
 };
 
-module.exports = {
-  handleDisconnect,
-  handleHangUp,
-};
+module.exports = { handleDisconnect, handleHangUp };
