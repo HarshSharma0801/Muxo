@@ -38,7 +38,7 @@ const HLSWatch = () => {
 
       // Check if stream exists
       const response = await fetch(
-        `http://localhost:3030/api/hls/streams/${roomName}/info`
+        `http://localhost:3030/api/hls/streams/${roomName}/playlist.m3u8`
       );
 
       if (!response.ok) {

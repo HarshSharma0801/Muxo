@@ -38,27 +38,48 @@ const handleStartProducing = async (
       }
     });
 
-    // Start HLS stream when first video producer joins
-    if (kind === "video" && hlsManager && participant.room) {
-      const hasVideoProducers = participant.room.members.some(
-        (member) =>
-          member.producer.video && member.producer.video.id !== producer.id
-      );
+    // 🎬 NEW: Handle HLS stream for ANY producer (video or audio)
+    if (hlsManager && participant.room) {
+      const roomName = participant.room.roomName;
 
-      if (!hasVideoProducers) {
-        // This is the first video producer, start HLS stream
+      if (kind === "video") {
+        // For video producers, always update the stream
+        console.log(
+          `🎥 Video producer joined room ${roomName}, updating HLS stream...`
+        );
+
         try {
-          await hlsManager.startHLSStream(
-            participant.room.roomName,
-            participant.room
-          );
-          console.log(
-            `Started HLS stream for room: ${participant.room.roomName}`
-          );
+          if (hlsManager.isStreamActive(roomName)) {
+            // Stream exists, update it to include new producer
+            await hlsManager.updateStream(roomName, participant.room);
+          } else {
+            // No stream exists, start new one
+            await hlsManager.startHLSStream(roomName, participant.room);
+            console.log(`✅ Started HLS stream for room: ${roomName}`);
+          }
         } catch (error) {
           console.error(
-            `Failed to start HLS stream for room ${participant.room.roomName}:`,
+            `❌ Failed to handle HLS stream for room ${roomName}:`,
             error
+          );
+        }
+      } else if (kind === "audio") {
+        // For audio producers, only update if video stream already exists
+        if (hlsManager.isStreamActive(roomName)) {
+          console.log(
+            `🎵 Audio producer joined room ${roomName}, updating HLS stream...`
+          );
+          try {
+            await hlsManager.updateStream(roomName, participant.room);
+          } catch (error) {
+            console.error(
+              `❌ Failed to update HLS stream for audio in room ${roomName}:`,
+              error
+            );
+          }
+        } else {
+          console.log(
+            `🎵 Audio producer joined room ${roomName}, but no video stream exists yet`
           );
         }
       }
