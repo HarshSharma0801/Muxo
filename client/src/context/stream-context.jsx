@@ -7,6 +7,7 @@ export const StreamProvider = ({ children }) => {
   const [consumers, setConsumers] = useState({});
   const [AllUsers, setAllUsers] = useState([]);
   const [device, setDevice] = useState(null);
+  const [userName, setUserName] = useState("");
 
   return (
     <StreamContext.Provider
@@ -16,7 +17,9 @@ export const StreamProvider = ({ children }) => {
         device,
         setDevice,
         AllUsers,
-        setAllUsers
+        setAllUsers,
+        userName,
+        setUserName,
       }}
     >
       {children}

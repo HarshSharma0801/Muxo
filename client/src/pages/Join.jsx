@@ -12,7 +12,7 @@ const Join = () => {
   const [roomData, setRoomData] = useState({ name: "", room: "" });
   const [error, setError] = useState(null);
 
-  const { setConsumers, setDevice, setAllUsers } = useStream();
+  const { setConsumers, setDevice, setAllUsers, setUserName } = useStream();
   const { socket, isConnected } = useSocket();
   const deviceRef = useRef(null);
   const router = useNavigate();
@@ -103,7 +103,19 @@ const Join = () => {
       return;
     }
 
+    if (!roomData.name.trim()) {
+      setError("Please enter your name");
+      return;
+    }
+
+    if (!roomData.room.trim()) {
+      setError("Please enter a room name");
+      return;
+    }
+
     try {
+      setUserName(roomData.name.trim());
+
       const joinRoomRes = await new Promise((resolve, reject) => {
         socket.emit("join", roomData, (response) => {
           if (response && response.routerRtpCapabilities) {

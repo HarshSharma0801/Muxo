@@ -4,13 +4,14 @@ import initializeMediaConsumer from "../mediasoup/consumers/media-consumer";
 import initializeConsumerTransport from "../mediasoup/consumers/media-consumer-transport";
 import { useSocket } from "../context/socket-context";
 import { useNavigate } from "react-router";
+import StreamChat from "../components/StreamChat";
 
 const Watch = () => {
   const { socket } = useSocket();
 
   const router = useNavigate();
 
-  const { AllUsers, device, setConsumers, setAllUsers } = useStream();
+  const { AllUsers, device, setConsumers, setAllUsers, userName } = useStream();
 
   const localStreamVid = useRef();
 
@@ -244,6 +245,9 @@ const Watch = () => {
           )}
         </div>
       </div>
+
+      {/* Chat Component */}
+      <StreamChat mode="watch" userName={userName || "Viewer"} />
     </>
   );
 };

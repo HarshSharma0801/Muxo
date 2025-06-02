@@ -59,6 +59,19 @@ const setupSocketHandlers = (io, rooms, workers) => {
       const result = await handleHangUp(participant, socket, rooms);
       ackCall(result);
     });
+
+    // Chat message handler
+    socket.on("chatMessage", (messageData) => {
+      if (participant && participant.room && participant.room.roomName) {
+        console.log(
+          `Broadcasting message from ${messageData.user} in room ${participant.room.roomName}`
+        );
+        // Broadcast message to all participants in the same room (including sender)
+        socket.to(participant.room.roomName).emit("chatMessage", messageData);
+        // Also emit to the sender to ensure they see their own message
+        socket.emit("chatMessage", messageData);
+      }
+    });
   });
 };
 
