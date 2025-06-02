@@ -4,7 +4,9 @@ A real-time video conferencing application built with Mediasoup, Socket.IO, and 
 
 ## Video
 
-https://github.com/user-attachments/assets/ee111853-9aa1-4ffb-8a45-8fa977b613a8
+
+https://github.com/user-attachments/assets/82cc5a34-c11e-4a49-b584-67afb3e4d81c
+
 
 ## 🆕 New Features
 
